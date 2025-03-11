@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,6 +23,8 @@ public class SecurityConfig {
                         .requestMatchers("/public/**").permitAll()      // Allow access to public resources
                         .requestMatchers("/admin").denyAll()            // Deny access to admin page
                         .anyRequest().authenticated());
+
+        http.csrf(AbstractHttpConfigurer::disable);
 
         // Disable session creation by default in Spring Security 5 to prevent session fixation vulnerabilities and improve security
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
