@@ -5,6 +5,7 @@ import com.notebook.app.models.RoleName;
 import com.notebook.app.models.User;
 import com.notebook.app.repositories.RoleRepository;
 import com.notebook.app.repositories.UserRepository;
+import com.notebook.app.security.service.RequestValidationFilter;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.time.LocalDate;
 
@@ -30,6 +32,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated());
         http.csrf(AbstractHttpConfigurer::disable);
+        http.addFilterBefore(new CustomLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new RequestValidationFilter(), CustomLoggingFilter.class);
         // http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
         return http.build();
